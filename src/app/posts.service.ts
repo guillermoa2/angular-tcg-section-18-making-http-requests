@@ -10,6 +10,7 @@ export class PostsService {
 
     constructor(private http: HttpClient) {}
 
+    // .subscribe is here because its not returning anything to the component. just console.log()'ing some data 
     createAndStorePost(title: string, content: string) {
         const postData: Post = { title: title, content: content};
         this.http
@@ -24,10 +25,13 @@ export class PostsService {
     }
 
     fetchPosts() {
-        this.http
+        // heavy-lifting, part detached from template & UI
+        return this.http
+            // sending of the request
             .get<{ [key: string]: Post }>(
                 'https://angular-tcg-sect-18-http-req-default-rtdb.firebaseio.com/posts.json'
             )
+            // transformation of the data
             .pipe(
                 map(responseData => {
                     const postsArray: Post[] = [];
@@ -38,9 +42,6 @@ export class PostsService {
                     }
                     return postsArray;
                 })
-            )
-            .subscribe(posts => {
-                
-            });
+            );
     }
 }
