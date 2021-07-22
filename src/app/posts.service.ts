@@ -1,8 +1,8 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 
-import { map } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
+import { Subject, throwError } from 'rxjs';
 
 import { Post } from './post.model';
 
@@ -45,6 +45,15 @@ export class PostsService {
                         }
                     }
                     return postsArray;
+                }),
+                catchError(errorRes => {
+                    // errorRes is error response. Same data from 2nd arg of the .subscribe()
+                    // Send to analytics server, or some generic error handling task not related to the UI (Behind the scenes)
+                    // Alternative is use Subject & .next(error.message)
+                    // When done handling error, need to pass something to reach .subscribe() in the app.component
+                    // throwError wraps errorRes into an Observable
+                    // Doesn't do anything useful, but an idea to use catchError for generic handling task you want to execute
+                    return throwError(errorRes);
                 })
             );
     }
