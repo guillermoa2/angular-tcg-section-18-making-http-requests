@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 
 import { map, catchError } from 'rxjs/operators';
 import { Subject, throwError } from 'rxjs';
@@ -29,13 +29,20 @@ export class PostsService {
     }
 
     fetchPosts() {
+        let searchParams = new HttpParams();
+        // reassign to && append b/c searchParams object is immutable
+        // formats the response into a human readable way. In THIS project our code reads it, so not necessary
+        searchParams = searchParams.append('print', 'pretty');
+        // dummy query params
+        searchParams = searchParams.append('custom', 'key');
         // heavy-lifting, part detached from template & UI
         return this.http
             // sending of the request
             .get<{ [key: string]: Post }>(
                 'https://angular-tcg-sect-18-http-req-default-rtdb.firebaseio.com/posts.json',
                 {
-                    headers: new HttpHeaders({ 'Custom-Header': 'Hello' })
+                    headers: new HttpHeaders({ 'Custom-Header': 'Hello' }),
+                    params: searchParams,
                 }
             )
             // transformation of the data
