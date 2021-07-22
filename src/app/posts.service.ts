@@ -44,4 +44,8 @@ export class PostsService {
                 })
             );
     }
+
+    deletePosts() {
+        return this.http.delete('https://angular-tcg-sect-18-http-req-default-rtdb.firebaseio.com/posts.json');
+    }
 }

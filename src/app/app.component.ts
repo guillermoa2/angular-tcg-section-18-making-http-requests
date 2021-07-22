@@ -43,6 +43,10 @@ export class AppComponent implements OnInit {
 
   onClearPosts() {
     // Send Http request
+    // We don't care about a response, but the subscribe function will only run if it succeeds
+    this.postsService.deletePosts().subscribe(() => {
+      this.loadedPosts = [];
+    })
   }
 
 }
