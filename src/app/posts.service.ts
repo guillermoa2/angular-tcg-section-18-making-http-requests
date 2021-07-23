@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
-import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
+import { HttpClient, HttpEventType, HttpHeaders, HttpParams } from "@angular/common/http";
 
-import { map, catchError } from 'rxjs/operators';
+import { map, catchError, tap } from 'rxjs/operators';
 import { Subject, throwError } from 'rxjs';
 
 import { Post } from './post.model';
@@ -19,7 +19,10 @@ export class PostsService {
         // The <> defines response data types of generic HTTP verb methods is optional BUT recommended. For better autocompletion and avoid unnecessary TypeScript errors.
         .post<{ name: string }>(
             'https://angular-tcg-sect-18-http-req-default-rtdb.firebaseio.com/posts.json',
-            postData
+            postData,
+            {
+                observe: 'response'
+            }
         )
         .subscribe( responseData => {
             console.log(responseData);
@@ -69,6 +72,21 @@ export class PostsService {
     }
 
     deletePosts() {
-        return this.http.delete('https://angular-tcg-sect-18-http-req-default-rtdb.firebaseio.com/posts.json');
+        return this.http
+            .delete('https://angular-tcg-sect-18-http-req-default-rtdb.firebaseio.com/posts.json', {
+                observe: 'events'
+            })
+            .pipe(
+                tap(event => {
+                    console.log(event);
+                    if (event.type == HttpEventType.Sent) {
+                        // .... only event.type works for .Sent
+                        // These are helpful if you need control over your request status
+                    }
+                    if (event.type == HttpEventType.Response) {
+                        console.log(event.body);
+                    }
+                })
+            );
     }
 }
