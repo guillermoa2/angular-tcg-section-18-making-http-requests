@@ -46,6 +46,7 @@ export class PostsService {
                 {
                     headers: new HttpHeaders({ 'Custom-Header': 'Hello' }),
                     params: searchParams,
+                    responseType: 'json'
                 }
             )
             // transformation of the data
@@ -74,7 +75,8 @@ export class PostsService {
     deletePosts() {
         return this.http
             .delete('https://angular-tcg-sect-18-http-req-default-rtdb.firebaseio.com/posts.json', {
-                observe: 'events'
+                observe: 'events',
+                responseType: 'text'
             })
             .pipe(
                 tap(event => {
